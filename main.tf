@@ -8,5 +8,7 @@ module "proxmox_vm_per_node" {
   default_bridge          = var.default_bridge
   ci_username             = var.ci_username
   ssh_authorized_key_path = var.ssh_authorized_key_path
+  user_data_content       = var.user_data_content
+  ci_password             = var.ci_password
   vms                     = var.vms
 }

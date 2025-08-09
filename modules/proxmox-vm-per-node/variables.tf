@@ -11,6 +11,20 @@ variable "ssh_authorized_key_path" {
   default = ""
 }
 
+variable "ci_password" {
+  description = "Optional password for the cloud-init user"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+# cloud-init
+variable "user_data_content" {
+  description = "Optional cloud-init user-data; if empty, none is attached."
+  type        = string
+  default     = ""
+}
+
 variable "vms" {
   type = map(object({
     node_name  = string
@@ -19,10 +33,8 @@ variable "vms" {
     memory_mb  = number
     disk_gb    = number
     bridge     = optional(string)
-    vlan       = optional(number)
     ip_cidr    = optional(string)
-    gateway4   = optional(string)
-    tags       = optional(list(string))
+    gateway    = optional(string)
     datastore  = optional(string)
   }))
 }

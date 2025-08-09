@@ -3,6 +3,16 @@ locals {
   nodes   = toset([for vm in values(var.vms) : vm.node_name])
 }
 
+# Create a cloud-init snippet per node (only if user_data_content is set)
+resource "proxmox_virtual_environment_file" "user_data" {
+  for_each     = var.user_data_content != "" ? local.nodes : {}
+  node_name    = each.value
+  content_type = "snippets"
+  datastore_id = var.datastore_image
+  file_name    = "ci-user-data.yaml"
+  content      = var.user_data_content
+}
+
 # Download the cloud image to each referenced node once
 resource "proxmox_virtual_environment_download_file" "cloud_image" {
   for_each     = local.nodes
@@ -20,7 +30,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
   name      = each.key
   node_name = each.value.node_name
   vm_id     = each.value.vm_id
-  tags      = concat(["terraform"], coalesce(each.value.tags, []))
 
   started = true
   on_boot = true
@@ -51,15 +60,20 @@ resource "proxmox_virtual_environment_vm" "vm" {
   network_device {
     bridge   = coalesce(each.value.bridge, var.default_bridge)
     model    = "virtio"
-    vlan_tag = try(each.value.vlan, 0) # 0 = no VLAN
   }
 
   initialization {
     datastore_id = var.datastore_vm
 
+    # attach user-data if present on this node
+    user_data_file_id = contains(keys(proxmox_virtual_environment_file.user_data), each.value.node_name)
+      ? proxmox_virtual_environment_file.user_data[each.value.node_name].id
+      : null
+
     user_account {
       username = var.ci_username
       keys     = local.ssh_key != null ? [local.ssh_key] : null
+      password = var.ci_password != "" ? var.ci_password : null
     }
 
     ip_config {

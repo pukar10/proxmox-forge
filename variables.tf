@@ -1,3 +1,4 @@
+# https//192.168.1.30:8006/
 variable "endpoint" {
   description = "Proxmox API endpoint (https://host:8006/)"
   type        = string
@@ -51,10 +52,24 @@ variable "ci_username" {
   default = "psubedi"
 }
 
+variable "ci_password" {
+  description = "Optional password for the cloud-init user"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "ssh_authorized_key_path" {
   description = "Path to a public key to inject; leave empty to skip"
   type        = string
   default     = "~/.ssh/id_rsa.pub"
+}
+
+# cloud-init
+variable "user_data_content" {
+  description = "Optional cloud-init user-data; if empty, none is attached."
+  type        = string
+  default     = ""
 }
 
 # One VM per entry (key = VM name)
@@ -71,4 +86,24 @@ variable "vms" {
     gateway   = optional(string)
     datastore = optional(string) # override for boot disk
   }))
+}
+
+variable "ssh_username" {
+  type    = string
+  default = "root"
+}
+
+variable "ssh_use_agent" {
+  type    = bool
+  default = true
+}
+
+variable "ssh_private_key_path" {
+  type    = string
+  default = "~/.ssh/id_rsa"
+}
+variable "ssh_password" {
+  type      = string
+  default   = ""
+  sensitive = true
 }

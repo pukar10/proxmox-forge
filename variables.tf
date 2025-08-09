@@ -99,8 +99,9 @@ variable "ssh_use_agent" {
 }
 
 variable "ssh_private_key_path" {
-  type    = string
-  default = "~/.ssh/id_rsa"
+  description = "absolute path to your public ssh key"
+  type        = string
+  default     = ""
 }
 variable "ssh_password" {
   type      = string

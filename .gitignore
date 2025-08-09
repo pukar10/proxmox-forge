@@ -1,0 +1,27 @@
+# --- Terraform local state & cache ---
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Sensitive variable files ---
+terraform.tfvars
+*.tfvars
+
+# --- Backup files ---
+*.bak
+*.backup
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+
+# --- Editor junk ---
+.idea/
+.vscode/
+*.swp

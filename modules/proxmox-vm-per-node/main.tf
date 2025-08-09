@@ -66,9 +66,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     datastore_id = var.datastore_vm
 
     # attach user-data if present on this node
-    user_data_file_id = contains(keys(proxmox_virtual_environment_file.user_data), each.value.node_name)
-      ? proxmox_virtual_environment_file.user_data[each.value.node_name].id
-      : null
+    user_data_file_id = var.user_data_content != "" ? proxmox_virtual_environment_file.user_data[each.value.node_name].id : null
 
     user_account {
       username = var.ci_username

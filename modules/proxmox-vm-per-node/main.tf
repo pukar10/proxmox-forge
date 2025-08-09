@@ -32,7 +32,7 @@ resource "proxmox_virtual_environment_download_file" "cloud_image" {
 
 # Create one VM per map entry
 resource "proxmox_virtual_environment_vm" "vm" {
-  for_each   = var.vms
+  for_each = var.vms
 
   name      = each.key
   node_name = each.value.node_name
@@ -65,8 +65,8 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   network_device {
-    bridge   = coalesce(each.value.bridge, var.default_bridge)
-    model    = "virtio"
+    bridge = coalesce(each.value.bridge, var.default_bridge)
+    model  = "virtio"
   }
 
   initialization {

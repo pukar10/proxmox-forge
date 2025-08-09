@@ -5,12 +5,19 @@ locals {
 
 # Create a cloud-init snippet per node (only if user_data_content is set)
 resource "proxmox_virtual_environment_file" "user_data" {
-  for_each     = var.user_data_content != "" ? local.nodes : {}
-  node_name    = each.value
+  for_each = {
+    for n in toset([for vm in values(var.vms) : vm.node_name]) : n => n
+    if trimspace(var.user_data_content) != ""
+  }
+
+  node_name    = each.key
   content_type = "snippets"
   datastore_id = var.datastore_image
-  file_name    = "ci-user-data.yaml"
-  content      = var.user_data_content
+
+  source_raw {
+    file_name = "ci-user-data.yaml"
+    data      = var.user_data_content
+  }
 }
 
 # Download the cloud image to each referenced node once

@@ -84,7 +84,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     ip_config {
       ipv4 {
         address = try(each.value.ip_cidr, "dhcp")
-        gateway = try(each.value.gateway4, null)
+        gateway = try(each.value.gateway, null)
       }
     }
   }

@@ -1,4 +1,4 @@
-module "proxmox_vm_per_node" {
+module "create_vms" {
   source = "./modules/proxmox-vm-per-node"
 
   image_url               = var.image_url

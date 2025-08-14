@@ -44,16 +44,27 @@ resource "proxmox_virtual_environment_vm" "vm" {
   agent { enabled = true }
 
   # Helpful with some cloud images when resizing
-  serial_device { device = "socket" }
-
-  cpu {
-    cores = each.value.cores
-    type  = "x86-64-v2-AES"
+  serial_device { 
+    device = "socket" 
   }
 
-  memory { dedicated = each.value.memory_mb }
+  cpu {
+    type  = "host"
+    sockets = try(each.value.sockets, "1")
+    cores = each.value.cores
+    numa = true
+  }
 
-  operating_system { type = "l26" }
+  memory { 
+    dedicated = each.value.memory_mb 
+    floating = 0
+  }
+
+  operating_system { 
+    type = "l26" 
+  }
+
+  rng_device {}
 
   disk {
     datastore_id = coalesce(each.value.datastore, var.datastore_vm)
@@ -62,6 +73,9 @@ resource "proxmox_virtual_environment_vm" "vm" {
     iothread     = true
     discard      = "on"
     size         = each.value.disk_gb
+    cache        = "none"
+    aio          = "native"
+    replicate    = false
   }
 
   network_device {

@@ -44,24 +44,24 @@ resource "proxmox_virtual_environment_vm" "vm" {
   agent { enabled = true }
 
   # Helpful with some cloud images when resizing
-  serial_device { 
-    device = "socket" 
+  serial_device {
+    device = "socket"
   }
 
   cpu {
-    type  = "host"
+    type    = "host"
     sockets = try(each.value.sockets, "1")
-    cores = each.value.cores
-    numa = true
+    cores   = each.value.cores
+    numa    = true
   }
 
-  memory { 
-    dedicated = each.value.memory_mb 
-    floating = 0
+  memory {
+    dedicated = each.value.memory_mb
+    floating  = 0
   }
 
-  operating_system { 
-    type = "l26" 
+  operating_system {
+    type = "l26"
   }
 
   disk {

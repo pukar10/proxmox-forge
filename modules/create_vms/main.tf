@@ -64,8 +64,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
     type = "l26" 
   }
 
-  rng_device {}
-
   disk {
     datastore_id = coalesce(each.value.datastore, var.datastore_vm)
     file_id      = proxmox_virtual_environment_download_file.cloud_image[each.value.node_name].id

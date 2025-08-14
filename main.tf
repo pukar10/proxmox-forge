@@ -1,5 +1,5 @@
 module "create_vms" {
-  source = "./modules/proxmox-vm-per-node"
+  source = "./modules/create_vms"
 
   image_url               = var.image_url
   image_file_name         = var.image_file_name

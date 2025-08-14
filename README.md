@@ -4,6 +4,8 @@ Provision Proxmox VMs with Cloud‑Init via the bpg/proxmox providers.
 
 ## Getting started
 
+Edit the variables in terraform.tfvars to get the project working.
+
 ### Project Structure
 
 * `main.tf` - starting point/logic
@@ -15,6 +17,7 @@ Provision Proxmox VMs with Cloud‑Init via the bpg/proxmox providers.
 
 ### Useful commands
 
+* `terraform fmt -recursive` - terraform enforces special formatting, this will format all your files recursively
 * `terraform plan` - shows a plan of what terraform will create/modify/destroy. Refreshes your state and checks against desired state.
 * `terraform apply` - applies the above plan/your desired state
 

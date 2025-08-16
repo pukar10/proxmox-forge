@@ -15,14 +15,15 @@ Edit the variables in terraform.tfvars to get the project working.
 * `outputs.tf` - defines output variables which can be passed to other modules
 * `terraform.tfstate` - terraforms local cache of your infrastructure's current state
 
-### Useful commands
-
-* `terraform fmt -recursive` - terraform enforces special formatting, this will format all your files recursively
-* `terraform plan` - shows a plan of what terraform will create/modify/destroy. Refreshes your state and checks against desired state.
-* `terraform apply` - applies the above plan/your desired state
-
 ## To Do
 
 - [x] ssh keys + password working
 - [ ] Configure a second disk for rook-ceph to take over on each VM
 - [ ] Make the variables.tf more robust
+
+## Deployment
+
+1. Copy `terraform.tfvars.example` to `terraform.tfvars` and fill it out.
+2. `terraform fmt -recursive` - ensure everthing is formated correctly.
+3. `terraform plan` - inspect for errors before applying
+4. `terraform apply` - build infrastructure

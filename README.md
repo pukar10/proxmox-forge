@@ -25,3 +25,4 @@ Edit the variables in terraform.tfvars to get the project working.
 
 - [x] ssh keys + password working
 - [ ] Configure a second disk for rook-ceph to take over on each VM
+- [ ] Make the variables.tf more robust

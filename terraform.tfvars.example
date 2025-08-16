@@ -1,9 +1,9 @@
 # IP to any proxmox host (preferably primary)
 # Disable or enable TLS
 # Proxmox api token to make api calls
-endpoint  = "https://192.168.1.30:8006/"
+endpoint  = "https://192.168.1.x:8006/"
 insecure  = true
-api_token = "ansible@pve!ansible=9f290045-6c00-4912-ae1d-cc9184c57c6b"
+api_token = "<USER@REALM!TOKENID=UUID>"
 
 # datastore_image - storage image will get downloaded too
 # datastore_vm - storage VMs will be created with
@@ -19,8 +19,18 @@ default_bridge  = "vmbr0"
 image_url               = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 image_file_name         = "ubuntu-24.04-noble.img"
 ci_username             = "psubedi"
-ci_password             = "Subedi10!"
+ci_password             = ""
 ssh_authorized_key_path = "~/.ssh/id_rsa.pub"
+
+# Ssh values
+ssh_username         = "root"
+ssh_use_agent        = true
+ssh_private_key_path = "~/.ssh/id_rsa"
+ssh_password         = "Subedi10!"
+
+# Custom yaml passed to cloudinit for initialization
+# Empty to disable custom yaml
+user_data_content = ""
 
 # Configurations for the VMs you want to create
 vms = {
@@ -36,7 +46,7 @@ vms = {
     datastore = "local-lvm"
   }
   "k3-node-2" = {
-    node_name = "proxmox1"
+    node_name = "proxmox2"
     vm_id     = 501
     cores     = 3
     memory_mb = 12288
@@ -47,9 +57,9 @@ vms = {
     datastore = "local-lvm"
   }
   "k3-node-3" = {
-    node_name = "proxmox2"
+    node_name = "proxmox3"
     vm_id     = 502
-    cores     = 3
+    cores     = 5
     memory_mb = 12288
     disk_gb   = 50
     ip_cidr   = "192.168.1.42/24"
@@ -57,47 +67,4 @@ vms = {
     gateway   = "192.168.1.1"
     datastore = "local-lvm"
   }
-  "k3-node-4" = {
-    node_name = "proxmox2"
-    vm_id     = 503
-    cores     = 3
-    memory_mb = 12288
-    disk_gb   = 50
-    ip_cidr   = "192.168.1.43/24"
-    bridge    = "vmbr0"
-    gateway   = "192.168.1.1"
-    datastore = "local-lvm"
-  }
-  "k3-node-5" = {
-    node_name = "proxmox3"
-    vm_id     = 504
-    cores     = 5
-    memory_mb = 12288
-    disk_gb   = 50
-    ip_cidr   = "192.168.1.44/24"
-    bridge    = "vmbr0"
-    gateway   = "192.168.1.1"
-    datastore = "local-lvm"
-  }
-    "k3-node-5" = {
-    node_name = "proxmox3"
-    vm_id     = 504
-    cores     = 5
-    memory_mb = 12288
-    disk_gb   = 50
-    ip_cidr   = "192.168.1.44/24"
-    bridge    = "vmbr0"
-    gateway   = "192.168.1.1"
-    datastore = "local-lvm"
-  }
 }
-
-# Ssh values
-ssh_username         = "root"
-ssh_use_agent        = true
-ssh_private_key_path = "~/.ssh/id_rsa"
-ssh_password         = "Subedi10!"
-
-# Custom yaml passed to cloudinit for initialization
-# Empty to disable custom yaml
-user_data_content = ""

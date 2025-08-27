@@ -7,8 +7,8 @@ module "create_vms" {
   datastore_vm            = var.datastore_vm
   default_bridge          = var.default_bridge
   ci_username             = var.ci_username
+  ci_password             = var.ci_password
   ssh_authorized_key_path = var.ssh_authorized_key_path
   user_data_content       = var.user_data_content
-  ci_password             = var.ci_password
   vms                     = var.vms
 }

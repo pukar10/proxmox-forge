@@ -1,10 +1,9 @@
-# https//192.168.1.30:8006/
+# ==== Proxmox connection ====
 variable "endpoint" {
   description = "Proxmox API endpoint (https://host:8006/)"
   type        = string
 }
 
-# ansible@pve!ansible=9f290045-6c00-4912-ae1d-cc9184c57c6b
 variable "api_token" {
   description = "Proxmox API token in full form: user@realm!token=<uuid>"
   type        = string
@@ -17,7 +16,29 @@ variable "insecure" {
   default     = true
 }
 
-# Image settings
+# ==== SSH connection to Proxmox host ====
+variable "ssh_username" {
+  type    = string
+  default = "root"
+}
+
+variable "ssh_use_agent" {
+  type    = bool
+  default = true
+}
+
+variable "ssh_private_key_path" {
+  description = "absolute path to your public ssh key"
+  type        = string
+  default     = ""
+}
+variable "ssh_password" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
+
+# ==== VM creation ====
 variable "image_url" {
   description = "Cloud image URL"
   type        = string
@@ -30,7 +51,6 @@ variable "image_file_name" {
   default     = "ubuntu-24.04-noble.img"
 }
 
-# Storage/bridge defaults
 variable "datastore_image" {
   type    = string
   default = "local"
@@ -46,7 +66,7 @@ variable "default_bridge" {
   default = "vmbr0"
 }
 
-# Cloud-init defaults
+# ---- Cloud-init user ----
 variable "ci_username" {
   type    = string
   default = "psubedi"
@@ -65,7 +85,6 @@ variable "ssh_authorized_key_path" {
   default     = "~/.ssh/id_rsa.pub"
 }
 
-# cloud-init
 variable "user_data_content" {
   description = "Optional cloud-init user-data; if empty, none is attached."
   type        = string
@@ -86,25 +105,4 @@ variable "vms" {
     gateway   = optional(string)
     datastore = optional(string) # override for boot disk
   }))
-}
-
-variable "ssh_username" {
-  type    = string
-  default = "root"
-}
-
-variable "ssh_use_agent" {
-  type    = bool
-  default = true
-}
-
-variable "ssh_private_key_path" {
-  description = "absolute path to your public ssh key"
-  type        = string
-  default     = ""
-}
-variable "ssh_password" {
-  type      = string
-  default   = ""
-  sensitive = true
 }

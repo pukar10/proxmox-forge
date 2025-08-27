@@ -77,10 +77,11 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   initialization {
+    type         = "cloudinit"
     datastore_id = var.datastore_vm
 
     # Attach cloud-init
-    user_data_file_id = var.user_data_content != "" ? "${var.datastore_image}:snippets/ci-user-data.yaml" : null
+    user_data_file_id = proxmox_virtual_environment_file.user_data[each.value.node_name].id
 
     # user_account {
     #   username = var.ci_username

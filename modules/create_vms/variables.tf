@@ -12,7 +12,7 @@ variable "ssh_authorized_key_path" {
 
 # cloud-init
 variable "user_data_content" {
-  description = "Optional cloud-init user-data; if empty, none is attached."
+  description = "cloud-init user-data"
   type        = string
   sensitive   = true
 }

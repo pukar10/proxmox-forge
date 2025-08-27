@@ -25,7 +25,6 @@ ssh_authorized_key_path = "~/.ssh/id_rsa.pub"
 # Ssh values
 ssh_username         = "root"
 ssh_use_agent        = true
-ssh_private_key_path = "~/.ssh/id_rsa"
 ssh_password         = "Subedi10!"
 
 # Custom yaml passed to cloudinit for initialization

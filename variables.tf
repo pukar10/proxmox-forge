@@ -27,12 +27,6 @@ variable "ssh_use_agent" {
   default = true
 }
 
-variable "ssh_private_key_path" {
-  description = "absolute path to your private ssh key"
-  type        = string
-  default     = ""
-}
-
 variable "ssh_password" {
   type      = string
   default   = ""
@@ -83,7 +77,7 @@ variable "ci_password" {
 variable "ssh_authorized_key_path" {
   description = "Path to a public key to inject; leave empty to skip"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_ed25519.pub"
 }
 
 variable "user_data_content" {

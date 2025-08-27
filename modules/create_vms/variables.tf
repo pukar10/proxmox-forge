@@ -9,7 +9,7 @@ variable "ci_username" { type = string }
 
 variable "ssh_authorized_key_path" {
   type    = string
-  default = ""
+  default = "~/.ssh/id_rsa.pub"
 }
 
 variable "ci_password" {

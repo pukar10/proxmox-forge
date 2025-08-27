@@ -2,7 +2,7 @@ locals {
   nodes   = toset([for vm in values(var.vms) : vm.node_name])
 }
 
-# Create a cloud-init snippet per node (only if user_data_content is set)
+# Create a cloud-init snippet per node
 resource "proxmox_virtual_environment_file" "user_data" {
   for_each = local.nodes
 
@@ -91,8 +91,8 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
     ip_config {
       ipv4 {
-        address = try(each.value.ip_cidr, "dhcp")
-        gateway = try(each.value.gateway, null)
+        address = each.value.ip_cidr
+        gateway = each.value.gateway
       }
     }
   }

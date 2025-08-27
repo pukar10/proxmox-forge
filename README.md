@@ -27,3 +27,6 @@ Edit the variables in terraform.tfvars to get the project working.
 2. `terraform fmt -recursive` - ensure everthing is formated correctly.
 3. `terraform plan` - inspect for errors before applying
 4. `terraform apply` - build infrastructure
+
+Destroy all VMs
+`terraform destroy -target=module.create_vms`

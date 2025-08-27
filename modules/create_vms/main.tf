@@ -39,7 +39,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   agent { enabled = true }
 
-  # Helpful with some cloud images when resizing
   serial_device {
     device = "socket"
   }

@@ -26,7 +26,7 @@ resource "proxmox_virtual_environment_download_file" "cloud_image" {
   file_name    = var.image_file_name
 }
 
-# Create one VM per map entry
+# Create VMs
 resource "proxmox_virtual_environment_vm" "vm" {
   for_each = var.vms
 
@@ -80,7 +80,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   initialization {
     datastore_id = var.datastore_vm
 
-    # attach user-data if present on this node
+    # Attach cloud-init
     user_data_file_id = var.user_data_content != "" ? "${var.datastore_image}:snippets/ci-user-data.yaml" : null
 
     # user_account {

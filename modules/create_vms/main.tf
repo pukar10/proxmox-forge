@@ -16,7 +16,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
   }
 }
 
-# Download the cloud image to each referenced node once
+# Download the cloud image to each referenced node
 resource "proxmox_virtual_environment_download_file" "cloud_image" {
   for_each     = local.nodes
   content_type = "iso"

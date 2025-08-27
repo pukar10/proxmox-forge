@@ -6,6 +6,7 @@ variable "datastore_vm" { type = string }
 variable "default_bridge" { type = string }
 
 variable "ci_username" { type = string }
+
 variable "ssh_authorized_key_path" {
   type    = string
   default = ""

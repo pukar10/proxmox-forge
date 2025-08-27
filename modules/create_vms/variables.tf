@@ -5,25 +5,16 @@ variable "datastore_image" { type = string }
 variable "datastore_vm" { type = string }
 variable "default_bridge" { type = string }
 
-variable "ci_username" { type = string }
-
 variable "ssh_authorized_key_path" {
   type    = string
   default = "~/.ssh/id_ed25519.pub"
-}
-
-variable "ci_password" {
-  description = "Optional password for the cloud-init user"
-  type        = string
-  sensitive   = true
-  default     = ""
 }
 
 # cloud-init
 variable "user_data_content" {
   description = "Optional cloud-init user-data; if empty, none is attached."
   type        = string
-  default     = ""
+  sensitive   = true
 }
 
 variable "vms" {

@@ -80,12 +80,6 @@ variable "ssh_authorized_key_path" {
   default     = "~/.ssh/id_ed25519.pub"
 }
 
-variable "user_data_content" {
-  description = "Optional cloud-init user-data; if empty, none is attached."
-  type        = string
-  default     = ""
-}
-
 # One VM per entry (key = VM name)
 variable "vms" {
   description = "Map of per-VM configs"

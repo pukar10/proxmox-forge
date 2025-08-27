@@ -1,0 +1,12 @@
+ssh_pwauth: true
+users:
+  - name: ${username}
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ${pubkey}
+chpasswd:
+  list: |
+    ${username}:${password}
+  expire: false

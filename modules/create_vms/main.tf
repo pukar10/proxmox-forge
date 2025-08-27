@@ -1,16 +1,12 @@
 locals {
-  ssh_key = var.ssh_authorized_key_path != "" ? trimspace(file(var.ssh_authorized_key_path)) : null
-  nodes   = toset([for vm in values(var.vms) : vm.node_name])
+  nodes   = [for vm in values(var.vms) : vm.node_name]
 }
 
 # Create a cloud-init snippet per node (only if user_data_content is set)
 resource "proxmox_virtual_environment_file" "user_data" {
-  for_each = {
-    for n in toset([for vm in values(var.vms) : vm.node_name]) : n => n
-    if trimspace(var.user_data_content) != ""
-  }
+  for_each = local.nodes
 
-  node_name    = each.key
+  node_name    = each.value
   content_type = "snippets"
   datastore_id = var.datastore_image
 
@@ -50,7 +46,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   cpu {
     type    = "host"
-    sockets = try(each.value.sockets, "1")
+    sockets = try(each.value.sockets, 1)
     cores   = each.value.cores
     numa    = true
   }
@@ -85,13 +81,13 @@ resource "proxmox_virtual_environment_vm" "vm" {
     datastore_id = var.datastore_vm
 
     # attach user-data if present on this node
-    user_data_file_id = trimspace(var.user_data_content) != "" ? "${var.datastore_image}:snippets/ci-user-data.yaml" : null
+    user_data_file_id = var.user_data_content != "" ? "${var.datastore_image}:snippets/ci-user-data.yaml" : null
 
-    user_account {
-      username = var.ci_username
-      keys     = local.ssh_key != null ? [local.ssh_key] : null
-      password = var.ci_password != "" ? var.ci_password : null
-    }
+    # user_account {
+    #   username = var.ci_username
+    #   keys     = local.ssh_key != null ? [local.ssh_key] : null
+    #   password = var.ci_password != "" ? var.ci_password : null
+    # }
 
     ip_config {
       ipv4 {

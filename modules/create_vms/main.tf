@@ -63,7 +63,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   disk {
     datastore_id = coalesce(each.value.datastore, var.datastore_vm)
     file_id      = proxmox_virtual_environment_download_file.cloud_image[each.value.node_name].id
-    interface    = "scsi0"
+    interface    = "virtio0"
     iothread     = true
     discard      = "on"
     size         = each.value.disk_gb

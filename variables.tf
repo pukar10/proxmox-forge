@@ -28,10 +28,11 @@ variable "ssh_use_agent" {
 }
 
 variable "ssh_private_key_path" {
-  description = "absolute path to your public ssh key"
+  description = "absolute path to your private ssh key"
   type        = string
   default     = ""
 }
+
 variable "ssh_password" {
   type      = string
   default   = ""

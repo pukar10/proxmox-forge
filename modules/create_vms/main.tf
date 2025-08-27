@@ -1,5 +1,5 @@
 locals {
-  nodes   = [for vm in values(var.vms) : vm.node_name]
+  nodes   = toset([for vm in values(var.vms) : vm.node_name])
 }
 
 # Create a cloud-init snippet per node (only if user_data_content is set)

@@ -63,19 +63,18 @@ variable "default_bridge" {
 
 # ---- Cloud-init user ----
 variable "ci_username" {
+  description = "Username for the cloud-init user"
   type    = string
-  default = "psubedi"
 }
 
 variable "ci_password" {
-  description = "Optional password for the cloud-init user"
+  description = "Password for cloud-init user"
   type        = string
   sensitive   = true
-  default     = ""
 }
 
 variable "ssh_authorized_key_path" {
-  description = "Path to a public key to inject; leave empty to skip"
+  description = "Path to a public key to inject"
   type        = string
   default     = "~/.ssh/id_ed25519.pub"
 }

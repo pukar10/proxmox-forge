@@ -11,7 +11,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
   datastore_id = var.datastore_image
 
   source_raw {
-    file_name = "ci-user-data.yaml"
+    file_name = "cloud-init.yaml"
     data      = var.user_data_content
   }
 }
@@ -100,7 +100,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
       }
     }
   }
-  
+
   # guarantee that the cloud-init snippet and image download are done first
   depends_on = [
     proxmox_virtual_environment_file.user_data,

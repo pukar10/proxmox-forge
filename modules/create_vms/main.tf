@@ -40,7 +40,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   agent { 
     enabled = true
     type = "virtio"
-    timeout = 20s
+    timeout = "20s"
     }
 
   serial_device {
@@ -99,11 +99,11 @@ resource "proxmox_virtual_environment_vm" "vm" {
         gateway = each.value.gateway
       }
     }
-
-    # guarantee that the cloud-init snippet and image download are done first
-    depends_on = [
-      proxmox_virtual_environment_file.user_data,
-      proxmox_virtual_environment_download_file.cloud_image,
-    ]
   }
+  
+  # guarantee that the cloud-init snippet and image download are done first
+  depends_on = [
+    proxmox_virtual_environment_file.user_data,
+    proxmox_virtual_environment_download_file.cloud_image,
+  ]
 }

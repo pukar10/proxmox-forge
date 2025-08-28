@@ -84,6 +84,16 @@ resource "proxmox_virtual_environment_vm" "vm" {
   ]
 }
 
+# Download the cloud image to each referenced node
+resource "proxmox_virtual_environment_download_file" "cloud_image" {
+  for_each     = local.nodes
+  content_type = "iso"
+  datastore_id = var.datastore_image
+  node_name    = each.value
+  url          = var.image_url
+  file_name    = var.image_file_name
+}
+
 # Create a cloud-init snippet per node
 resource "proxmox_virtual_environment_file" "user_data" {
   for_each = local.nodes
@@ -96,14 +106,4 @@ resource "proxmox_virtual_environment_file" "user_data" {
     file_name = "cloud-init.yaml"
     data      = var.user_data_content
   }
-}
-
-# Download the cloud image to each referenced node
-resource "proxmox_virtual_environment_download_file" "cloud_image" {
-  for_each     = local.nodes
-  content_type = "iso"
-  datastore_id = var.datastore_image
-  node_name    = each.value
-  url          = var.image_url
-  file_name    = var.image_file_name
 }

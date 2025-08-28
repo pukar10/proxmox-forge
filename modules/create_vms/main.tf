@@ -2,30 +2,6 @@ locals {
   nodes   = toset([for vm in values(var.vms) : vm.node_name])
 }
 
-# Create a cloud-init snippet per node
-resource "proxmox_virtual_environment_file" "user_data" {
-  for_each = local.nodes
-
-  node_name    = each.value
-  content_type = "snippets"
-  datastore_id = var.datastore_image
-
-  source_raw {
-    file_name = "cloud-init.yaml"
-    data      = var.user_data_content
-  }
-}
-
-# Download the cloud image to each referenced node
-resource "proxmox_virtual_environment_download_file" "cloud_image" {
-  for_each     = local.nodes
-  content_type = "iso"
-  datastore_id = var.datastore_image
-  node_name    = each.value
-  url          = var.image_url
-  file_name    = var.image_file_name
-}
-
 # Create VMs
 resource "proxmox_virtual_environment_vm" "vm" {
   for_each = var.vms
@@ -64,7 +40,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   disk {
-    datastore_id = coalesce(each.value.datastore, var.datastore_vm)
+    datastore_id = each.value.datastore_vm
     file_id      = proxmox_virtual_environment_download_file.cloud_image[each.value.node_name].id
     interface    = "virtio0"
     iothread     = true
@@ -106,4 +82,28 @@ resource "proxmox_virtual_environment_vm" "vm" {
     proxmox_virtual_environment_file.user_data,
     proxmox_virtual_environment_download_file.cloud_image,
   ]
+}
+
+# Create a cloud-init snippet per node
+resource "proxmox_virtual_environment_file" "user_data" {
+  for_each = local.nodes
+
+  node_name    = each.value
+  content_type = "snippets"
+  datastore_id = var.datastore_image
+
+  source_raw {
+    file_name = "cloud-init.yaml"
+    data      = var.user_data_content
+  }
+}
+
+# Download the cloud image to each referenced node
+resource "proxmox_virtual_environment_download_file" "cloud_image" {
+  for_each     = local.nodes
+  content_type = "iso"
+  datastore_id = var.datastore_image
+  node_name    = each.value
+  url          = var.image_url
+  file_name    = var.image_file_name
 }

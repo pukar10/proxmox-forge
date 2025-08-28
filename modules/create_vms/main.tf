@@ -54,7 +54,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   }
 
   disk {
-    datastore_id = each.value.datastore_vm
+    datastore_id = each.value.datastore
     file_id      = proxmox_virtual_environment_download_file.ubuntu_cloud_image[each.value.node_name].id
     interface    = "virtio0"
     iothread     = true

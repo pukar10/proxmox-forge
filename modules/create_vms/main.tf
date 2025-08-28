@@ -37,7 +37,11 @@ resource "proxmox_virtual_environment_vm" "vm" {
   started = true
   on_boot = true
 
-  agent { enabled = true }
+  agent { 
+    enabled = true
+    type = "virtio"
+    timeout = 20s
+    }
 
   serial_device {
     device = "socket"
@@ -81,8 +85,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     datastore_id = var.datastore_vm
 
     # Attach cloud-init
-    user_data_file_id = "${var.datastore_image}:snippets/ci-user-data.yaml"
-    # user_data_file_id = proxmox_virtual_environment_file.user_data[each.value.node_name].id
+    user_data_file_id = proxmox_virtual_environment_file.user_data[each.value.node_name].id
 
     # user_account {
     #   username = var.ci_username
@@ -96,5 +99,11 @@ resource "proxmox_virtual_environment_vm" "vm" {
         gateway = each.value.gateway
       }
     }
+
+    # guarantee that the cloud-init snippet and image download are done first
+    depends_on = [
+      proxmox_virtual_environment_file.user_data,
+      proxmox_virtual_environment_download_file.cloud_image,
+    ]
   }
 }

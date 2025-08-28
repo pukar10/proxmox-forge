@@ -1,4 +1,5 @@
 ssh_pwauth: true
+
 users:
   - name: ${username}
     groups: sudo
@@ -6,7 +7,15 @@ users:
     lock_passwd: false
     ssh_authorized_keys:
       - ${pubkey}
+
 chpasswd:
   list: |
     ${username}:${password}
   expire: false
+
+packages:
+  - qemu-guest-agent
+
+runcmd:
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent

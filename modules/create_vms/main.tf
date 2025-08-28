@@ -77,7 +77,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   initialization {
-    type         = "cloudinit"
+    type         = "nocloud"
     datastore_id = var.datastore_vm
 
     # Attach cloud-init

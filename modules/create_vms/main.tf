@@ -2,8 +2,22 @@ locals {
   nodes   = toset([for vm in values(var.vms) : vm.node_name])
 }
 
+# Create a cloud-init snippet per node
+resource "proxmox_virtual_environment_file" "user_data" {
+  for_each = local.nodes
+
+  node_name    = each.value
+  content_type = "snippets"
+  datastore_id = var.datastore_image
+
+  source_raw {
+    file_name = "cloud-init.yaml"
+    data      = var.user_data_content
+  }
+}
+
 # Create VMs
-resource "proxmox_virtual_environment_vm" "vm" {
+resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   for_each = var.vms
 
   name      = each.key
@@ -41,7 +55,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   disk {
     datastore_id = each.value.datastore_vm
-    file_id      = proxmox_virtual_environment_download_file.cloud_image[each.value.node_name].id
+    file_id      = proxmox_virtual_environment_download_file.ubuntu_cloud_image[each.value.node_name].id
     interface    = "virtio0"
     iothread     = true
     discard      = "on"
@@ -80,30 +94,16 @@ resource "proxmox_virtual_environment_vm" "vm" {
   # guarantee that the cloud-init snippet and image download are done first
   depends_on = [
     proxmox_virtual_environment_file.user_data,
-    proxmox_virtual_environment_download_file.cloud_image,
+    proxmox_virtual_environment_download_file.ubuntu_cloud_image,
   ]
 }
 
 # Download the cloud image to each referenced node
-resource "proxmox_virtual_environment_download_file" "cloud_image" {
+resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
   for_each     = local.nodes
   content_type = "iso"
   datastore_id = var.datastore_image
   node_name    = each.value
   url          = var.image_url
   file_name    = var.image_file_name
-}
-
-# Create a cloud-init snippet per node
-resource "proxmox_virtual_environment_file" "user_data" {
-  for_each = local.nodes
-
-  node_name    = each.value
-  content_type = "snippets"
-  datastore_id = var.datastore_image
-
-  source_raw {
-    file_name = "cloud-init.yaml"
-    data      = var.user_data_content
-  }
 }

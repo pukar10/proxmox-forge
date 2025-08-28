@@ -6,9 +6,9 @@ locals {
 resource "proxmox_virtual_environment_file" "user_data" {
   for_each = local.nodes
 
-  node_name    = each.value
   content_type = "snippets"
   datastore_id = var.datastore_image
+  node_name    = each.value
 
   source_raw {
     file_name = "cloud-init.yaml"

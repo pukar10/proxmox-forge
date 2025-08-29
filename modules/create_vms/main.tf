@@ -1,5 +1,23 @@
 locals {
-  nodes   = toset([for vm in values(var.vms) : vm.node_name])
+  nodes = toset([for vm in values(var.vms) : vm.node_name])
+
+  cloud_init_user_data = "#cloud-config\n${yamlencode({
+    ssh_pwauth = true
+    users = [{
+      name                = var.ci_username
+      groups              = "sudo"
+      shell               = "/bin/bash"
+      lock_passwd         = false
+      ssh_authorized_keys = [chomp(var.ci_pubkey)]
+    }]
+    chpasswd = {
+      list   = "${var.ci_username}:${var.ci_password}\n"
+      expire = false
+    }
+    package_update = true
+    packages       = ["qemu-guest-agent"]
+    runcmd         = ["systemctl enable --now qemu-guest-agent"]
+  })}"
 }
 
 # Create a cloud-init snippet per node
@@ -11,8 +29,8 @@ resource "proxmox_virtual_environment_file" "user_data" {
   node_name    = each.value
 
   source_raw {
-    file_name = "cloud-init.yaml"
-    data      = var.user_data_content
+    file_name = "cloud-init-${each.value}.yaml"
+    data      = local.cloud_init_user_data
   }
 }
 
@@ -27,32 +45,27 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   started = true
   on_boot = true
 
-  agent { 
+  agent {
     enabled = true
-    type = "virtio"
+    type    = "virtio"
     timeout = "20s"
-    }
-
+  }
   serial_device {
     device = "socket"
   }
-
   cpu {
     type    = "host"
     sockets = try(each.value.sockets, 1)
     cores   = each.value.cores
     numa    = true
   }
-
   memory {
     dedicated = each.value.memory_mb
     floating  = 0
   }
-
   operating_system {
     type = "l26"
   }
-
   disk {
     datastore_id = each.value.datastore
     file_id      = proxmox_virtual_environment_download_file.ubuntu_cloud_image[each.value.node_name].id
@@ -74,14 +87,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     type         = "nocloud"
     datastore_id = var.datastore_vm
 
-    # Attach cloud-init
     user_data_file_id = proxmox_virtual_environment_file.user_data[each.value.node_name].id
-
-    # user_account {
-    #   username = var.ci_username
-    #   keys     = local.ssh_key != null ? [local.ssh_key] : null
-    #   password = var.ci_password != "" ? var.ci_password : null
-    # }
 
     ip_config {
       ipv4 {
@@ -91,7 +97,6 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     }
   }
 
-  # guarantee that the cloud-init snippet and image download are done first
   depends_on = [
     proxmox_virtual_environment_file.user_data,
     proxmox_virtual_environment_download_file.ubuntu_cloud_image,

@@ -5,16 +5,14 @@ variable "datastore_image" { type = string }
 variable "datastore_vm" { type = string }
 variable "default_bridge" { type = string }
 
-variable "ssh_authorized_key_path" {
+variable "ci_username" {type    = string }
+variable "ci_password" { 
   type    = string
-  default = "~/.ssh/id_ed25519.pub"
+  sensitive = true
 }
-
-# cloud-init
-variable "user_data_content" {
-  description = "cloud-init user-data"
-  type        = string
-  sensitive   = true
+variable "ci_pubkey" { 
+  type    = string
+  sensitive = true
 }
 
 variable "vms" {

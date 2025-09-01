@@ -29,4 +29,4 @@ Edit the variables in terraform.tfvars to get the project working.
 4. `terraform apply` - build infrastructure
 
 Destroy all VMs
-`terraform destroy -target=module.create_vms`
+`terraform apply -var='vms={}' -auto-approve`

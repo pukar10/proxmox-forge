@@ -1,3 +1,11 @@
+locals {
+  cloud_init_rendered = templatefile("${path.module}/templates/cloud-init.yaml", {
+    username = var.ci_username
+    password = var.ci_password
+    pubkey   = chomp(file(pathexpand("~/.ssh/id_ed25519.pub")))
+  })
+}
+
 module "create_vms" {
   source = "./modules/create_vms"
 
@@ -7,9 +15,7 @@ module "create_vms" {
   datastore_vm    = var.datastore_vm
   default_bridge  = var.default_bridge
 
-  ci_username = var.ci_username
-  ci_password = var.ci_password
-  ci_pubkey   = file(pathexpand("~/.ssh/id_ed25519.pub"))
+  cloud_init = local.cloud_init_rendered
 
   vms = var.vms
 

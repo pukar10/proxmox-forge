@@ -5,14 +5,9 @@ variable "datastore_image" { type = string }
 variable "datastore_vm" { type = string }
 variable "default_bridge" { type = string }
 
-variable "ci_username" {type    = string }
-variable "ci_password" { 
-  type    = string
-  sensitive = true
-}
-variable "ci_pubkey" { 
-  type    = string
-  sensitive = true
+variable "cloud_init" {
+  description = "Cloud-init user data"
+  type        = string
 }
 
 variable "vms" {

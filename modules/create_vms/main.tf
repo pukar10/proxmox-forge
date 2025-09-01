@@ -1,28 +1,26 @@
 locals {
   nodes = toset([for vm in values(var.vms) : vm.node_name])
+}
 
-  cloud_init_user_data = "#cloud-config\n${yamlencode({
-    ssh_pwauth = true
-    users = [{
-      name                = var.ci_username
-      groups              = "sudo"
-      shell               = "/bin/bash"
-      lock_passwd         = false
-      ssh_authorized_keys = [chomp(var.ci_pubkey)]
-    }]
-    chpasswd = {
-      list   = "${var.ci_username}:${var.ci_password}\n"
-      expire = false
-    }
-    package_update = true
-    packages       = ["qemu-guest-agent"]
-    runcmd         = ["systemctl enable --now qemu-guest-agent"]
-  })}"
+# Cloud-init meta-data
+resource "proxmox_virtual_environment_file" "cloud_init_meta" {
+  for_each = var.vms
+  content_type = "snippets"
+  datastore_id = var.datastore_image
+  node_name    = each.value.node_name
+
+  source_raw {
+    file_name = "meta-${each.key}.yaml"
+    data = yamlencode({
+      instance_id    = "iid-${each.value.vm_id}"
+      local-hostname = each.key
+    })
+  }
 }
 
 # Create a cloud-init snippet per node
-resource "proxmox_virtual_environment_file" "user_data" {
-  for_each = local.nodes
+resource "proxmox_virtual_environment_file" "cloud_init" {
+  for_each     = local.nodes
 
   content_type = "snippets"
   datastore_id = var.datastore_image
@@ -30,7 +28,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
 
   source_raw {
     file_name = "cloud-init-${each.value}.yaml"
-    data      = local.cloud_init_user_data
+    data      = var.cloud_init
   }
 }
 
@@ -87,7 +85,8 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     type         = "nocloud"
     datastore_id = var.datastore_vm
 
-    user_data_file_id = proxmox_virtual_environment_file.user_data[each.value.node_name].id
+    # meta_data_file_id = proxmox_virtual_environment_file.cloud_init_meta[each.key].id
+    # user_data_file_id = proxmox_virtual_environment_file.cloud_init[each.value.node_name].id
 
     ip_config {
       ipv4 {
@@ -98,8 +97,9 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   }
 
   depends_on = [
-    proxmox_virtual_environment_file.user_data,
     proxmox_virtual_environment_download_file.ubuntu_cloud_image,
+    proxmox_virtual_environment_file.cloud_init,
+    proxmox_virtual_environment_file.cloud_init_meta
   ]
 }
 

@@ -9,7 +9,7 @@ module "create_vms" {
 
   ci_username = var.ci_username
   ci_password = var.ci_password
-  ci_ssh_key = var.ci_ssh_key
+  ci_ssh_key = pathexpand(var.ci_ssh_key)
 
   vms = var.vms
 

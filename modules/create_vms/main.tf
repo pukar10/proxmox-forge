@@ -20,7 +20,7 @@ resource "proxmox_virtual_environment_file" "cloud_init" {
       
       users:
         - defaut
-        - name: ${var.ci_user}
+        - name: ${var.ci_username}
           groups: 
             - sudo
           shell: /bin/bash
@@ -31,7 +31,7 @@ resource "proxmox_virtual_environment_file" "cloud_init" {
 
       chpasswd:
         list: |
-          ${var.ci_user}:${var.ci_password}
+          ${var.ci_username}:${var.ci_password}
         expire: False
 
       package_update: true

@@ -5,7 +5,7 @@ variable "datastore_image" { type = string }
 variable "datastore_vm" { type = string }
 variable "default_bridge" { type = string }
 
-variable "ci_user" { type = string }
+variable "ci_username" { type = string }
 variable "ci_password" { type = string }
 variable "ci_ssh_key" { type = string }
 

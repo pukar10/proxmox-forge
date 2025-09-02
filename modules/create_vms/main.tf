@@ -12,7 +12,7 @@ resource "proxmox_virtual_environment_file" "cloud_init" {
 
   source_raw {
     file_name = "cloud-init-${each.value}.yaml"
-    data = <<-EOF
+    data      = <<-EOF
       #cloud-config
       hostname: ${each.value}-vm
       timezone: America/New_York
@@ -42,9 +42,12 @@ resource "proxmox_virtual_environment_file" "cloud_init" {
         - curl
       
       runcmd:
-        -- systemctl enable --now qemu-guest-agent
+        - sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        - systemctl restart sshd
+        - systemctl enable --now qemu-guest-agent
         - echo "done" > /tmp/cloud-config.done
       EOF
+  }
 }
 
 # Create VMs

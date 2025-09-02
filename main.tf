@@ -17,7 +17,7 @@ module "create_vms" {
 
   ci_username = var.ci_username
   ci_password = var.ci_password
-  cci_ssh_key  = var.ci_ssh_key
+  cci_ssh_key = var.ci_ssh_key
 
   # cloud_init = local.cloud_init_rendered
 

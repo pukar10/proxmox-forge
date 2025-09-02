@@ -2,25 +2,9 @@ locals {
   nodes = toset([for vm in values(var.vms) : vm.node_name])
 }
 
-# Cloud-init meta-data
-resource "proxmox_virtual_environment_file" "cloud_init_meta" {
-  for_each = var.vms
-  content_type = "snippets"
-  datastore_id = var.datastore_image
-  node_name    = each.value.node_name
-
-  source_raw {
-    file_name = "meta-${each.key}.yaml"
-    data = yamlencode({
-      instance_id    = "iid-${each.value.vm_id}"
-      local-hostname = each.key
-    })
-  }
-}
-
 # Create a cloud-init snippet per node
 resource "proxmox_virtual_environment_file" "cloud_init" {
-  for_each     = local.nodes
+  for_each = local.nodes
 
   content_type = "snippets"
   datastore_id = var.datastore_image
@@ -85,8 +69,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     type         = "nocloud"
     datastore_id = var.datastore_vm
 
-    # meta_data_file_id = proxmox_virtual_environment_file.cloud_init_meta[each.key].id
-    # user_data_file_id = proxmox_virtual_environment_file.cloud_init[each.value.node_name].id
+    user_data_file_id = proxmox_virtual_environment_file.cloud_init[each.value.node_name].id
 
     ip_config {
       ipv4 {
@@ -98,8 +81,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
 
   depends_on = [
     proxmox_virtual_environment_download_file.ubuntu_cloud_image,
-    proxmox_virtual_environment_file.cloud_init,
-    proxmox_virtual_environment_file.cloud_init_meta
+    proxmox_virtual_environment_file.cloud_init
   ]
 }
 

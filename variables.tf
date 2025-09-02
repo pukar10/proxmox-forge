@@ -73,7 +73,7 @@ variable "ci_password" {
   sensitive   = true
 }
 
-variable "ci_pubkey" {
+variable "ci_ssh_key" {
   description = "Path to a public key to inject"
   type        = string
   default     = "~/.ssh/id_ed25519.pub"

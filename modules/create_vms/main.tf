@@ -12,8 +12,39 @@ resource "proxmox_virtual_environment_file" "cloud_init" {
 
   source_raw {
     file_name = "cloud-init-${each.value}.yaml"
-    data      = var.cloud_init
-  }
+    data = <<-EOF
+      #cloud-config
+      hostname: ${each.value}-vm
+      timezone: America/New_York
+      ssh_pwauth: true
+      
+      users:
+        - defaut
+        - name: ${var.ci_user}
+          groups: 
+            - sudo
+          shell: /bin/bash
+          ssh_authorized_keys:
+            - ${var.ci_ssh_key}
+          sudo: ALL=(ALL) NOPASSWD:ALL
+          lock_passwd: false
+
+      chpasswd:
+        list: |
+          ${var.ci_user}:${var.ci_password}
+        expire: False
+
+      package_update: true
+      package_upgrade: true
+      packages:
+        - qemu-guest-agent
+        - net-tools
+        - curl
+      
+      runcmd:
+        -- systemctl enable --now qemu-guest-agent
+        - echo "done" > /tmp/cloud-config.done
+      EOF
 }
 
 # Create VMs

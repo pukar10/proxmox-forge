@@ -5,10 +5,14 @@ variable "datastore_image" { type = string }
 variable "datastore_vm" { type = string }
 variable "default_bridge" { type = string }
 
-variable "cloud_init" {
-  description = "Cloud-init user data"
-  type        = string
-}
+variable "ci_user" { type = string }
+variable "ci_password" { type = string }
+variable "ci_ssh_key" { type = string }
+
+# variable "cloud_init" {
+#   description = "Cloud-init user data"
+#   type        = string
+# }
 
 variable "vms" {
   type = map(object({
